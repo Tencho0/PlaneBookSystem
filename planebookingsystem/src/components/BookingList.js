@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchBookings, deleteBooking } from '../api';
 
-export const BookingList = () => {
+export const BookingList = ({ refreshTrigger }) => {
     const [bookings, setBookings] = useState([]);
     const [page, setPage] = useState(0);
     const [totalBookingsCount, setTotalBookingsCount] = useState(0);
@@ -20,7 +20,7 @@ export const BookingList = () => {
             }
         };
         loadBookings();
-    }, [page]);
+    }, [page, refreshTrigger]);
 
     const handleDelete = async (id) => {
         try {
