@@ -3,15 +3,17 @@ import { fetchBookings, deleteBooking } from '../api';
 
 export const BookingList = () => {
     const [bookings, setBookings] = useState([]);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
+    const [totalBookingsCount, setTotalBookingsCount] = useState(0);
     const [error, setError] = useState(null);
+    const bookingsPerPage = 5;
 
     useEffect(() => {
         const loadBookings = async () => {
             try {
-                const newBookings = await fetchBookings(page);
-                console.log('Fetched bookings:', newBookings);
-                setBookings((prev) => [...prev, ...newBookings]);
+                const { list, totalCount } = await fetchBookings(page);
+                setBookings(list);
+                setTotalBookingsCount(totalCount);
             } catch (err) {
                 setError('Could not fetch bookings. Please try again later.');
                 console.error(err);
@@ -30,23 +32,34 @@ export const BookingList = () => {
         }
     };
 
-    const handleScroll = (e) => {
-        if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
-            setPage(page + 1);
-        }
+    const handlePageClick = (pageNumber) => {
+        setPage(pageNumber);
     };
 
+    const totalPages = Math.ceil(totalBookingsCount / bookingsPerPage);
+
     return (
-        <div onScroll={handleScroll}>
+        <div>
             {error && <div className="error">{error}</div>}
             <ul>
                 {bookings.map((booking) => (
                     <li key={booking.id}>
-                        {booking.firstName} {booking.lastName} - {booking.departureAirport} to {booking.destinationAirport}
+                        {booking.firstName} {booking.lastName} - {booking.departureAirportId} to {booking.arrivalAirportId}
                         <button onClick={() => handleDelete(booking.id)}>Delete</button>
                     </li>
                 ))}
             </ul>
+            <div className="pagination">
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => handlePageClick(index)}
+                        disabled={page === index}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
+            </div>
         </div>
     );
 };

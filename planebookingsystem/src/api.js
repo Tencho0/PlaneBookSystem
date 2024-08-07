@@ -10,7 +10,6 @@ export const fetchAirports = async () => {
         }
 
         const airports = await response.json();
-        console.log('Airports:', airports);
         return airports;
     } catch (error) {
         console.error('Error fetching airports:', error);
@@ -40,10 +39,10 @@ export const fetchBookings = async (page) => {
         }
 
         const data = await response.json();
-        console.log(data);
-        console.log(data.list);
-
-        return data.list;
+        return {
+            list: data.list,
+            totalCount: parseInt(data.totalCount, 10)
+        };
     } catch (error) {
         console.error('Failed to fetch bookings:', error);
         throw error;
@@ -52,8 +51,6 @@ export const fetchBookings = async (page) => {
 
 export const createBooking = async (bookingData) => {
     try {
-        console.log(JSON.stringify(bookingData));
-
         const response = await fetch(`${API_BASE_URL}/bookings/create?authToken=${API_TOKEN}`, {
             method: 'POST',
             headers: {
@@ -63,20 +60,14 @@ export const createBooking = async (bookingData) => {
             body: JSON.stringify(bookingData),
         });
 
-        console.log(response);
-
-
         if (!response.ok) {
             const errorResponse = await response.json();
-            console.error('Error creating booking:', errorResponse);
             throw new Error(`HTTP error! Status: ${response.status} - ${JSON.stringify(errorResponse)}`);
         }
 
         const data = await response.json();
-        console.log('Booking created successfully:', data);
         return data;
     } catch (error) {
-        console.error('Error creating booking:', error.message);
         throw error;
     }
 };
@@ -87,9 +78,7 @@ export const deleteBooking = async (id) => {
     //     headers: { Authorization: `Bearer ${API_TOKEN}` }
     // });
 
-    const response = await fetch(`${API_BASE_URL}/bookings/delete/${id}?authToken=${API_TOKEN}`, {
+    await fetch(`${API_BASE_URL}/bookings/delete/${id}?authToken=${API_TOKEN}`, {
         method: 'DELETE',
     });
-
-    console.log(response);
 };  
