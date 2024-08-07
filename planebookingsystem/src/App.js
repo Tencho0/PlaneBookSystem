@@ -1,25 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BookingForm } from './components/BookingForm';
+import { BookingList } from './components/BookingList';
+import { createBooking } from './api';
 
-function App() {
+const App = () => {
+  const handleBookingSubmit = async (formData) => {
+    const result = await createBooking(formData);
+    console.log(result);
+    console.log(formData);
+
+    return result;
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Plane Ticket Booking</h1>
+      <BookingForm onSubmit={handleBookingSubmit} />
+      <BookingList />
     </div>
   );
-}
+};
 
 export default App;
